@@ -1,4 +1,4 @@
-package com.example.masterrecipes;
+package com.example.masterrecipesandroid;
 
 import org.junit.Test;
 
