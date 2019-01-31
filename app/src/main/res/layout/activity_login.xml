@@ -14,7 +14,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
-        android:text="¿Que nombre le pongo?"
+        android:text="Inicio de sesión"
         android:textColor="#fff"
         android:textSize="26sp"
         android:textStyle="bold" />
@@ -38,6 +38,7 @@
             android:paddingTop="30dp">
 
             <android.support.design.widget.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -46,13 +47,14 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/user"
                     android:drawablePadding="10dip"
-                    android:drawableTint="#FF4081"
+                    android:drawableTint="@color/accent"
                     android:hint="Username"
                     android:inputType="textEmailAddress"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -62,17 +64,18 @@
                     android:layout_marginTop="16dp"
                     android:drawableLeft="@drawable/lock"
                     android:drawablePadding="10dip"
-                    android:drawableTint="#FF4081"
+                    android:drawableTint="@color/accent"
                     android:hint="Password"
                     android:inputType="numberPassword"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
+                android:id="@+id/btnSignIn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="22dp"
-                android:background="#d67601"
+                android:background="@color/accent"
                 android:text="Sign in"
                 android:textAllCaps="false"
                 android:textColor="#fff"
@@ -84,7 +87,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="5dp"
                 android:text="@string/Registro"
-                android:textColor="#d67601" />
+                android:textColor="@color/accent" />
 
 
         </LinearLayout>
