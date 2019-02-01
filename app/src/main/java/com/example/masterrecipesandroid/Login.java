@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -14,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -26,17 +28,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Login extends AppCompatActivity {
-    @BindView(R.id.btnSignIn) Button btnIniciarSesion;
     private RequestQueue cola;
+    @BindView(R.id.btnSignIn) Button btnIniciarSesion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         ButterKnife.bind(this);
 
-        makeAppFullscreen();
         cola = Volley.newRequestQueue(this);
+
+        makeAppFullscreen();
 
         btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,39 +61,33 @@ public class Login extends AppCompatActivity {
 
     private void login()
     {
-        String url = "http://192.168.1.133/api/1.0/login/";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url ="http://192.168.1.133/api/1.0/login/";
+        JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, url,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    String UsertToken = response.getString("key");
-                    String hola;
-
+                    String UserToken = response.getString("key");
+                    Log.e("UserToken",UserToken);
+                    String saad = "awdad";
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //TODO: Color lo que hará la aplicación cuando el usuario no se autentique correctamente
-                    }
-                }){
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error",error.toString());
+            }
+        }){
             @Override
             protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put("username", "juan");
                 params.put("password", "1234");
                 return params;
-        }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("Content-Type","application/x-www-form-urlencoded");
-                return params;
             }
         };
-        cola.add(request);
+        requestQueue.add(sr);
     }
 }
