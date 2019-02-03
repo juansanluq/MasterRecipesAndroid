@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,6 +33,8 @@ import butterknife.ButterKnife;
 public class Login extends AppCompatActivity {
 
     public Usuario loggedUser = new Usuario();
+    RequestQueue requestQueue;
+
     @BindView(R.id.login_title)
     TextView loginTitle;
     @BindView(R.id.edtUsername)
@@ -44,12 +48,15 @@ public class Login extends AppCompatActivity {
     @BindView(R.id.user_profile_photo)
     ImageButton userProfilePhoto;
 
+    static String UserToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         ButterKnife.bind(this);
+        requestQueue = Volley.newRequestQueue(this);
 
         makeAppFullscreen();
 
@@ -57,6 +64,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 login();
+                getLoggedUser();
             }
         });
 
@@ -78,18 +86,17 @@ public class Login extends AppCompatActivity {
     }
 
     private void login() {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url = "http://192.168.1.6/api/1.0/login/";
-        StringRequest sr = new StringRequest(Request.Method.POST, url,
+        String url_login = "http://192.168.1.133/api/1.0/login/";
+        StringRequest sr_login = new StringRequest(Request.Method.POST, url_login,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                         try {
                             JSONObject UserTokenJSON = new JSONObject(response);
-                            String UserToken = UserTokenJSON.getString("key");
-                            loggedUser.setToken(UserToken);
+                            Login.UserToken = UserTokenJSON.getString("key");
                         } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -118,7 +125,53 @@ public class Login extends AppCompatActivity {
                 return params;
             }
 
+            @Override
+            public Priority getPriority() {
+                return Priority.IMMEDIATE;
+            }
+
         };
-        requestQueue.add(sr);
+        requestQueue.add(sr_login);
+    }
+
+    private void getLoggedUser()
+    {
+        String url_getLoggedUser = "http://192.168.1.133/api/1.0/usuarios/";
+        StringRequest sr_getLoggedUser = new StringRequest(Request.Method.GET, url_getLoggedUser,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String respuesta = response;
+                        Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorS = error.toString();
+                        Toast.makeText(getApplicationContext(),"Esto casca al traerse el usuario",Toast.LENGTH_LONG);
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                params.put("Authorization","Token " + UserToken);
+
+                return params;
+            }
+
+            @Override
+            public Priority getPriority() {
+                return Priority.LOW;
+            }
+
+        };
+        requestQueue.add(sr_getLoggedUser);
     }
 }

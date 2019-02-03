@@ -69,7 +69,7 @@
                     android:drawablePadding="10dip"
                     android:drawableTint="@color/accent"
                     android:hint="Password"
-                    android:inputType="numberPassword"
+                    android:inputType="textPassword"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
