@@ -37,6 +37,7 @@ public class Login extends AppCompatActivity {
 
     static Usuario loggedUser = new Usuario();
     RequestQueue requestQueue;
+    static String base_url = "http://ec2-52-47-172-242.eu-west-3.compute.amazonaws.com";
 
     @BindView(R.id.login_title)
     TextView loginTitle;
@@ -89,7 +90,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void login() {
-        String url_login = "http://192.168.1.133/api/1.0/login/";
+        String url_login = base_url + "/api/1.0/login/";
         StringRequest sr_login = new StringRequest(Request.Method.POST, url_login,
                 new Response.Listener<String>() {
                     @Override
@@ -139,7 +140,7 @@ public class Login extends AppCompatActivity {
 
     private void getLoggedUser()
     {
-        String url_getLoggedUser = "http://192.168.1.133/api/1.0/usuarios/";
+        String url_getLoggedUser = base_url + "/api/1.0/usuarios/";
         StringRequest sr_getLoggedUser = new StringRequest(Request.Method.GET, url_getLoggedUser,
                 new Response.Listener<String>() {
                     @Override
@@ -159,7 +160,7 @@ public class Login extends AppCompatActivity {
                             loggedUser.setFoto(Usuario.getString("foto"));
                             loggedUser.setComentarios(Usuario.getString("comentarios"));
                             loggedUser.setToken(UserToken);
-                            String adasd = "asdasd";
+                            Toast.makeText(getApplicationContext(),"Has iniciado sesión correctamente",Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
