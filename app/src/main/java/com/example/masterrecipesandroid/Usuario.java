@@ -35,6 +35,29 @@ public class Usuario {
     @com.google.gson.annotations.Expose
     @com.google.gson.annotations.SerializedName("id")
     private int id;
+    private String Token;
+
+    public Usuario(String comentarios, String foto, String numeroTelefono, String coordenadas, String email,
+                   String fechaNacimiento, String apellidos, String nombre, String password, String username, int id)
+    {
+        this.comentarios = comentarios;
+        this.foto = foto;
+        this.numeroTelefono = numeroTelefono;
+        this.coordenadas = coordenadas;
+        this.email = email;
+        this.fechaNacimiento = fechaNacimiento;
+        this.apellidos = apellidos;
+        this.nombre = nombre;
+        this.password = password;
+        this.username = username;
+        this.id = id;
+        Token = null;
+    }
+
+    public Usuario()
+    {
+
+    }
 
     public String getToken() {
         return Token;
@@ -44,7 +67,7 @@ public class Usuario {
         Token = token;
     }
 
-    private String Token;
+
 
     public String getComentarios() {
         return comentarios;

@@ -20,6 +20,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +35,7 @@ import butterknife.ButterKnife;
 
 public class Login extends AppCompatActivity {
 
-    public Usuario loggedUser = new Usuario();
+    static Usuario loggedUser = new Usuario();
     RequestQueue requestQueue;
 
     @BindView(R.id.login_title)
@@ -141,15 +144,31 @@ public class Login extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        String respuesta = response;
-                        Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG);
+                        try {
+                            response = response.replace("[","");
+                            response = response.replace("]","");
+                            JSONObject Usuario = new JSONObject(response);
+                            loggedUser.setUsername(Usuario.getString("username"));
+                            loggedUser.setPassword(Usuario.getString("password"));
+                            loggedUser.setNombre(Usuario.getString("nombre"));
+                            loggedUser.setApellidos(Usuario.getString("apellidos"));
+                            loggedUser.setFechaNacimiento(Usuario.getString("fecha_nacimiento"));
+                            loggedUser.setEmail(Usuario.getString("email"));
+                            loggedUser.setCoordenadas(Usuario.getString("coordenadas"));
+                            loggedUser.setNumeroTelefono(Usuario.getString("numero_telefono"));
+                            loggedUser.setFoto(Usuario.getString("foto"));
+                            loggedUser.setComentarios(Usuario.getString("comentarios"));
+                            loggedUser.setToken(UserToken);
+                            String adasd = "asdasd";
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String errorS = error.toString();
-                        Toast.makeText(getApplicationContext(),"Esto casca al traerse el usuario",Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),"Error interno del servidor, intentelo de nuevo más tarde",Toast.LENGTH_LONG).show();
                     }
                 }) {
 
