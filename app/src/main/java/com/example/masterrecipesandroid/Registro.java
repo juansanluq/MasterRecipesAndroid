@@ -3,12 +3,14 @@ package com.example.masterrecipesandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -98,7 +100,8 @@ public class Registro extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RegistrarUsuario();
+                //RegistrarUsuario();
+                new register().execute();
             }
         });
 
@@ -116,13 +119,11 @@ public class Registro extends AppCompatActivity {
                 builder.setTitle("Selecciona método de entrada")
                         .setItems(R.array.opcionesEntrada, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                if(which == 0)
-                                {
+                                if (which == 0) {
                                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
                                 }
-                                if(which == 1)
-                                {
+                                if (which == 1) {
                                     if (checkPermission()) {
                                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                                         intent.setType("image/*");
@@ -237,8 +238,7 @@ public class Registro extends AppCompatActivity {
             photo = (Bitmap) data.getExtras().get("data");
             imgPerfil.setImageBitmap(photo);
         }
-        if(requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK)
-        {
+        if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             try {
                 photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
@@ -282,6 +282,81 @@ public class Registro extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
         } catch (UnsupportedEncodingException errorr) {
+        }
+    }
+
+    private class register extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(Registro.this,
+                    R.style.MasterRecipesTheme);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Autenticando...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            String url = Login.base_url + "/api/1.0/usuarios/";
+            VolleyMultipartRequest sr = new VolleyMultipartRequest(Request.Method.POST, url,
+                    new Response.Listener<NetworkResponse>() {
+                        @Override
+                        public void onResponse(NetworkResponse response) {
+                            Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // As of f605da3 the following should work
+                            NetworkResponse response = error.networkResponse;
+                            if (error instanceof ServerError && response != null) {
+                                try {
+                                    String res = new String(response.data,
+                                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                                    // Now you can use any deserializer to make sense of data
+                                    JSONObject obj = new JSONObject(res);
+                                } catch (UnsupportedEncodingException e1) {
+                                    // Couldn't properly decode data to string
+                                    e1.printStackTrace();
+                                } catch (JSONException e2) {
+                                    // returned data is not JSONObject?
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("username", edtUsername.getText().toString());
+                    params.put("password", edtPassword.getText().toString());
+                    params.put("nombre", edtNombre.getText().toString());
+                    params.put("apellidos", edtApellidos.getText().toString());
+                    params.put("fecha_nacimiento", edtFecha.getText().toString());
+                    params.put("email", edtEmail.getText().toString());
+                    params.put("numero_telefono", edtTelefono.getText().toString());
+                    params.put("comentarios", edtComentario.getText().toString());
+                    return params;
+                }
+
+                @Override
+                protected Map<String, DataPart> getByteData() {
+                    Map<String, DataPart> params = new HashMap<>();
+                    params.put("foto", new DataPart(edtUsername.getText().toString() + ".png", getFileDataFromDrawable(photo)));
+                    return params;
+                }
+
+            };
+            requestQueue.add(sr);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            progressDialog.dismiss();
         }
     }
 }
