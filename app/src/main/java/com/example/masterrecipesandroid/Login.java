@@ -43,7 +43,7 @@ public class Login extends AppCompatActivity {
 
     static Usuario loggedUser = new Usuario();
     RequestQueue requestQueue;
-    static String base_url = "http://ec2-52-47-172-242.eu-west-3.compute.amazonaws.com";
+    static String base_url = "http://192.168.1.133";
 
     @BindView(R.id.login_title)
     TextView loginTitle;
@@ -57,8 +57,10 @@ public class Login extends AppCompatActivity {
     TextView txvRegistro;
     @BindView(R.id.user_profile_photo)
     ImageButton userProfilePhoto;
+    ProgressDialog progressDialog;
 
     static String UserToken;
+    boolean logged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,10 @@ public class Login extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog = new ProgressDialog(Login.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Autenticando...");
+                progressDialog.show();
                 new full_login().execute();
             }
         });
@@ -87,7 +93,7 @@ public class Login extends AppCompatActivity {
     }
 
 
-    private void makeAppFullscreen() {
+     void makeAppFullscreen() {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
@@ -201,26 +207,124 @@ public class Login extends AppCompatActivity {
     }
 
     private class full_login extends AsyncTask<Void, Void, Void> {
-        ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
-            progressDialog = new ProgressDialog(Login.this,
-                    R.style.MasterRecipesTheme);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Autenticando...");
-            progressDialog.show();
+            super.onPreExecute();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            login();
-            getLoggedUser();
+            String url_login = base_url + "/api/1.0/login/";
+            StringRequest sr_login = new StringRequest(Request.Method.POST, url_login,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject UserTokenJSON = new JSONObject(response);
+                                Login.UserToken = UserTokenJSON.getString("key");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog.dismiss();
+                            if (edtUsername.getText().toString().isEmpty())
+                            {
+                                edtUsername.setError("El nombre de usuario no puede estar vacío");
+                            }
+                            else if (edtPassword.getText().toString().isEmpty())
+                            {
+                                edtPassword.setError("La contraseña no puede estar vacía");
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), "El nombre de usuario/contraseña es incorrecto", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("username", edtUsername.getText().toString());
+                    params.put("password", edtPassword.getText().toString());
+                    return params;
+                }
+
+                @Override
+                public Priority getPriority() {
+                    return Priority.IMMEDIATE;
+                }
+
+            };
+            requestQueue.add(sr_login);
+
+            String url_getLoggedUser = base_url + "/api/1.0/usuarios/";
+            StringRequest sr_getLoggedUser = new StringRequest(Request.Method.GET, url_getLoggedUser,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                response = response.replace("[","");
+                                response = response.replace("]","");
+                                JSONObject Usuario = new JSONObject(response);
+                                loggedUser.setUsername(Usuario.getString("username"));
+                                loggedUser.setPassword(Usuario.getString("password"));
+                                loggedUser.setNombre(Usuario.getString("nombre"));
+                                loggedUser.setApellidos(Usuario.getString("apellidos"));
+                                loggedUser.setFechaNacimiento(Usuario.getString("fecha_nacimiento"));
+                                loggedUser.setEmail(Usuario.getString("email"));
+                                loggedUser.setCoordenadas(Usuario.getString("coordenadas"));
+                                loggedUser.setNumeroTelefono(Usuario.getString("numero_telefono"));
+                                loggedUser.setFoto(Usuario.getString("foto"));
+                                loggedUser.setComentarios(Usuario.getString("comentarios"));
+                                loggedUser.setToken(UserToken);
+                                progressDialog.dismiss();
+                                Toast.makeText(getApplicationContext(),"Has iniciado sesión correctamente",Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), Principal.class);
+                                startActivity(intent);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"Error interno del servidor, intentelo de nuevo más tarde",Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<String, String>();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    params.put("Authorization","Token " + UserToken);
+
+                    return params;
+                }
+
+                @Override
+                public Priority getPriority() {
+                    return Priority.LOW;
+                }
+
+            };
+            requestQueue.add(sr_getLoggedUser);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            progressDialog.dismiss();
+            super.onPostExecute(result);
         }
     }
 }
