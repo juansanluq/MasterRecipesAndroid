@@ -1,6 +1,8 @@
 package com.example.masterrecipesandroid;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,10 +10,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 
@@ -25,8 +42,9 @@ import butterknife.BindView;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    TextView txvNombre, txvApellidos;
+    TextView txvNombre, txvApellidos,txvEmail,txvNumeroTelefono, txvUsername, txvFechaNacimiento, txvComentarios;
     ImageView imgProfile;
+    Button btnCerrarSesion;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,10 +97,71 @@ public class ProfileFragment extends Fragment {
         txvNombre = view.findViewById(R.id.txvNombre);
         txvApellidos = view.findViewById(R.id.txvApellidos);
         imgProfile = view.findViewById(R.id.imgProfile);
+        txvEmail = view.findViewById(R.id.txvEmail);
+        txvNumeroTelefono = view.findViewById(R.id.txvNumeroTelefono);
+        txvUsername = view.findViewById(R.id.txvUsername);
+        txvFechaNacimiento = view.findViewById(R.id.txvFechaNacimiento);
+        txvComentarios = view.findViewById(R.id.txvComentarios);
+        btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
 
         Picasso.with(getContext()).load(Login.loggedUser.getFoto()).into(imgProfile);
         txvNombre.setText(Login.loggedUser.getNombre());
         txvApellidos.setText(Login.loggedUser.getApellidos());
+        txvEmail.setText(Login.loggedUser.getEmail());
+        txvNumeroTelefono.setText(Login.loggedUser.getNumeroTelefono());
+        txvUsername.setText(Login.loggedUser.getUsername());
+        txvFechaNacimiento.setText(Login.loggedUser.getFechaNacimiento());
+        txvComentarios.setText(Login.loggedUser.getComentarios());
+
+        final RequestQueue requestQueue;
+        requestQueue = Volley.newRequestQueue(getContext());
+
+        btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Cerrando sesion...");
+                progressDialog.show();
+                String url_getLoggedUser = Login.base_url + "/api/1.0/logout/";
+                StringRequest sr_getLoggedUser = new StringRequest(Request.Method.POST, url_getLoggedUser,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                progressDialog.dismiss();
+                                getActivity().finish();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getContext(),"Error interno del servidor, pruebe mas tarde",Toast.LENGTH_LONG).show();
+                            }
+                        }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String>  params = new HashMap<String, String>();
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        params.put("Authorization","Token " + Login.UserToken);
+
+                        return params;
+                    }
+
+                    @Override
+                    public Priority getPriority() {
+                        return Priority.LOW;
+                    }
+
+                };
+                requestQueue.add(sr_getLoggedUser);
+            }
+        });
+
         return view;
     }
 

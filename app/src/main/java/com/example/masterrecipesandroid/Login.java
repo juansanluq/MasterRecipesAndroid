@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
 
     static Usuario loggedUser = new Usuario();
     static RequestQueue requestQueue;
-    static String base_url = "http://192.168.1.133";
+    static String base_url = "http://192.168.1.6";
     public static Context contexto;
 
     @BindView(R.id.login_title)
@@ -332,5 +332,14 @@ public class Login extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        edtUsername.setText("");
+        edtPassword.setText("");
+        edtUsername.clearFocus();
+        edtPassword.clearFocus();
     }
 }
