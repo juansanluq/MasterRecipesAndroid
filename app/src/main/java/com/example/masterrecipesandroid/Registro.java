@@ -1,5 +1,6 @@
 package com.example.masterrecipesandroid;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,10 +18,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -89,6 +90,8 @@ public class Registro extends AppCompatActivity {
     int RESULT_LOAD_IMG = 2;
     Bitmap photo;
     Context contexto;
+    ProgressDialog progressDialog;
+    GpsTracker gt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +100,17 @@ public class Registro extends AppCompatActivity {
         ButterKnife.bind(this);
         contexto = getApplicationContext();
 
+        ActivityCompat.requestPermissions(Registro.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 123);
+        gt = new GpsTracker(getApplicationContext());
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //RegistrarUsuario();
+                progressDialog = new ProgressDialog(Registro.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Registrando usuario...");
+                progressDialog.show();
                 new register().execute();
             }
         });
@@ -137,62 +147,6 @@ public class Registro extends AppCompatActivity {
         });
 
 
-    }
-
-    private void RegistrarUsuario() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        String url = Login.base_url + "/api/1.0/usuarios/";
-        VolleyMultipartRequest sr = new VolleyMultipartRequest(Request.Method.POST, url,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // As of f605da3 the following should work
-                        NetworkResponse response = error.networkResponse;
-                        if (error instanceof ServerError && response != null) {
-                            try {
-                                String res = new String(response.data,
-                                        HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                                // Now you can use any deserializer to make sense of data
-                                JSONObject obj = new JSONObject(res);
-                            } catch (UnsupportedEncodingException e1) {
-                                // Couldn't properly decode data to string
-                                e1.printStackTrace();
-                            } catch (JSONException e2) {
-                                // returned data is not JSONObject?
-                                e2.printStackTrace();
-                            }
-                        }
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("username", edtUsername.getText().toString());
-                params.put("password", edtPassword.getText().toString());
-                params.put("nombre", edtNombre.getText().toString());
-                params.put("apellidos", edtApellidos.getText().toString());
-                params.put("fecha_nacimiento", edtFecha.getText().toString());
-                params.put("email", edtEmail.getText().toString());
-                params.put("numero_telefono", edtTelefono.getText().toString());
-                params.put("comentarios", edtComentario.getText().toString());
-                return params;
-            }
-
-            @Override
-            protected Map<String, DataPart> getByteData() {
-                Map<String, DataPart> params = new HashMap<>();
-                params.put("foto", new DataPart(edtUsername.getText().toString() + ".png", getFileDataFromDrawable(photo)));
-                return params;
-            }
-
-        };
-        requestQueue.add(sr);
     }
 
     private void obtenerFecha() {
@@ -286,14 +240,9 @@ public class Registro extends AppCompatActivity {
     }
 
     private class register extends AsyncTask<Void, Void, Void> {
-        ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
-            progressDialog = new ProgressDialog(Registro.this,
-                    R.style.MasterRecipesTheme);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Autenticando...");
-            progressDialog.show();
+            super.onPreExecute();
         }
 
         @Override
@@ -304,28 +253,16 @@ public class Registro extends AppCompatActivity {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-                            Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),"Usuario registrado correctamente, ya puedes iniciar sesión",Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                            finish();
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             // As of f605da3 the following should work
-                            NetworkResponse response = error.networkResponse;
-                            if (error instanceof ServerError && response != null) {
-                                try {
-                                    String res = new String(response.data,
-                                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                                    // Now you can use any deserializer to make sense of data
-                                    JSONObject obj = new JSONObject(res);
-                                } catch (UnsupportedEncodingException e1) {
-                                    // Couldn't properly decode data to string
-                                    e1.printStackTrace();
-                                } catch (JSONException e2) {
-                                    // returned data is not JSONObject?
-                                    e2.printStackTrace();
-                                }
-                            }
+                            Toast.makeText(getApplicationContext(),"El usuario introducido no es válido, intenta con otro diferente",Toast.LENGTH_LONG).show();
                         }
                     }) {
                 @Override
@@ -339,6 +276,12 @@ public class Registro extends AppCompatActivity {
                     params.put("email", edtEmail.getText().toString());
                     params.put("numero_telefono", edtTelefono.getText().toString());
                     params.put("comentarios", edtComentario.getText().toString());
+                    Location l = gt.getLocation();
+                    if (l != null)
+                    {
+                        params.put("latitud",String.valueOf(l.getLatitude()));
+                        params.put("longitud",String.valueOf(l.getLongitude()));
+                    }
                     return params;
                 }
 

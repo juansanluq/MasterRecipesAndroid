@@ -4,9 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
 
 
 /**
@@ -18,6 +25,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
+    TextView txvNombre, txvApellidos;
+    ImageView imgProfile;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -58,13 +68,22 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        txvNombre = view.findViewById(R.id.txvNombre);
+        txvApellidos = view.findViewById(R.id.txvApellidos);
+        imgProfile = view.findViewById(R.id.imgProfile);
+
+        Picasso.with(getContext()).load(Login.loggedUser.getFoto()).into(imgProfile);
+        txvNombre.setText(Login.loggedUser.getNombre());
+        txvApellidos.setText(Login.loggedUser.getApellidos());
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -11,9 +11,15 @@ public class Usuario {
     @com.google.gson.annotations.Expose
     @com.google.gson.annotations.SerializedName("numero_telefono")
     private String numeroTelefono;
+
     @com.google.gson.annotations.Expose
-    @com.google.gson.annotations.SerializedName("coordenadas")
-    private String coordenadas;
+    @com.google.gson.annotations.SerializedName("longitud")
+    private String longitud;
+
+    @com.google.gson.annotations.Expose
+    @com.google.gson.annotations.SerializedName("latitud")
+    private String latitud;
+
     @com.google.gson.annotations.Expose
     @com.google.gson.annotations.SerializedName("email")
     private String email;
@@ -37,13 +43,19 @@ public class Usuario {
     private int id;
     private String Token;
 
-    public Usuario(String comentarios, String foto, String numeroTelefono, String coordenadas, String email,
-                   String fechaNacimiento, String apellidos, String nombre, String password, String username, int id)
+    public Usuario()
     {
+
+    }
+
+    public Usuario(String comentarios, String foto, String numeroTelefono, String longitud,
+                   String latitud, String email, String fechaNacimiento, String apellidos,
+                   String nombre, String password, String username, int id) {
         this.comentarios = comentarios;
         this.foto = foto;
         this.numeroTelefono = numeroTelefono;
-        this.coordenadas = coordenadas;
+        this.longitud = longitud;
+        this.latitud = latitud;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
         this.apellidos = apellidos;
@@ -51,23 +63,8 @@ public class Usuario {
         this.password = password;
         this.username = username;
         this.id = id;
-        Token = null;
+        this.Token = null;
     }
-
-    public Usuario()
-    {
-
-    }
-
-    public String getToken() {
-        return Token;
-    }
-
-    public void setToken(String token) {
-        Token = token;
-    }
-
-
 
     public String getComentarios() {
         return comentarios;
@@ -93,12 +90,20 @@ public class Usuario {
         this.numeroTelefono = numeroTelefono;
     }
 
-    public String getCoordenadas() {
-        return coordenadas;
+    public String getLongitud() {
+        return longitud;
     }
 
-    public void setCoordenadas(String coordenadas) {
-        this.coordenadas = coordenadas;
+    public void setLongitud(String longitud) {
+        this.longitud = longitud;
+    }
+
+    public String getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(String latitud) {
+        this.latitud = latitud;
     }
 
     public String getEmail() {
@@ -155,5 +160,13 @@ public class Usuario {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String token) {
+        Token = token;
     }
 }

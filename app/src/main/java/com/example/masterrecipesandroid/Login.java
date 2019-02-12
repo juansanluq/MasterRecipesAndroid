@@ -1,6 +1,7 @@
 package com.example.masterrecipesandroid;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -42,8 +43,9 @@ import butterknife.ButterKnife;
 public class Login extends AppCompatActivity {
 
     static Usuario loggedUser = new Usuario();
-    RequestQueue requestQueue;
+    static RequestQueue requestQueue;
     static String base_url = "http://192.168.1.133";
+    public static Context contexto;
 
     @BindView(R.id.login_title)
     TextView loginTitle;
@@ -71,6 +73,8 @@ public class Login extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
 
         makeAppFullscreen();
+
+        contexto = getApplicationContext();
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +104,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void login() {
+    public void login() {
         String url_login = base_url + "/api/1.0/login/";
         StringRequest sr_login = new StringRequest(Request.Method.POST, url_login,
                 new Response.Listener<String>() {
@@ -149,7 +153,7 @@ public class Login extends AppCompatActivity {
         requestQueue.add(sr_login);
     }
 
-    private void getLoggedUser()
+    public static void getLoggedUser()
     {
         String url_getLoggedUser = base_url + "/api/1.0/usuarios/";
         StringRequest sr_getLoggedUser = new StringRequest(Request.Method.GET, url_getLoggedUser,
@@ -166,12 +170,13 @@ public class Login extends AppCompatActivity {
                             loggedUser.setApellidos(Usuario.getString("apellidos"));
                             loggedUser.setFechaNacimiento(Usuario.getString("fecha_nacimiento"));
                             loggedUser.setEmail(Usuario.getString("email"));
-                            loggedUser.setCoordenadas(Usuario.getString("coordenadas"));
+                            loggedUser.setLatitud(Usuario.getString("latitud"));
+                            loggedUser.setLongitud(Usuario.getString("longitud"));
                             loggedUser.setNumeroTelefono(Usuario.getString("numero_telefono"));
                             loggedUser.setFoto(Usuario.getString("foto"));
                             loggedUser.setComentarios(Usuario.getString("comentarios"));
                             loggedUser.setToken(UserToken);
-                            Toast.makeText(getApplicationContext(),"Has iniciado sesión correctamente",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(contexto,"Has iniciado sesión correctamente",Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -180,7 +185,7 @@ public class Login extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),"Error interno del servidor, intentelo de nuevo más tarde",Toast.LENGTH_LONG).show();
+                        Toast.makeText(contexto,"Error interno del servidor, intentelo de nuevo más tarde",Toast.LENGTH_LONG).show();
                     }
                 }) {
 
@@ -277,7 +282,8 @@ public class Login extends AppCompatActivity {
                                 loggedUser.setApellidos(Usuario.getString("apellidos"));
                                 loggedUser.setFechaNacimiento(Usuario.getString("fecha_nacimiento"));
                                 loggedUser.setEmail(Usuario.getString("email"));
-                                loggedUser.setCoordenadas(Usuario.getString("coordenadas"));
+                                loggedUser.setLatitud(Usuario.getString("latitud"));
+                                loggedUser.setLongitud(Usuario.getString("longitud"));
                                 loggedUser.setNumeroTelefono(Usuario.getString("numero_telefono"));
                                 loggedUser.setFoto(Usuario.getString("foto"));
                                 loggedUser.setComentarios(Usuario.getString("comentarios"));
