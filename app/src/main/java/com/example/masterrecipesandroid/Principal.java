@@ -19,11 +19,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    static final ArrayList<Receta> recetas = new ArrayList<Receta>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +52,10 @@ public class Principal extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -52,6 +75,50 @@ public class Principal extends AppCompatActivity
 
         txvNombre.setText(Login.loggedUser.getNombre());
         txvApellidos.setText(Login.loggedUser.getApellidos());
+
+
+        String url_login = Login.base_url + "/api/1.0/recetas/";
+        JsonArrayRequest sr_recetas = new JsonArrayRequest(
+                Request.Method.GET,
+                url_login,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject RecetaJSON = response.getJSONObject(i);
+                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre")));
+                            }
+                            String sada = "";
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                params.put("Authorization","Token " + Login.loggedUser.getToken());
+
+                return params;
+            }
+
+        };
+        requestQueue.add(sr_recetas);
 
         navigationView.setNavigationItemSelectedListener(this);
     }

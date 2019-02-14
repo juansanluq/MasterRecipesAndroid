@@ -3,7 +3,7 @@ package com.example.masterrecipesandroid;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public abstract class Receta {
+public class Receta {
     @Expose
     @SerializedName("imagen")
     private String imagen;
@@ -31,6 +31,15 @@ public abstract class Receta {
     public Receta()
     {
 
+    }
+
+    public void clear()
+    {
+        this.imagen = null;
+        this.pdf = null;
+        this.dificultad = 0;
+        this.categoria = 0;
+        this.nombre = null;
     }
 
     public String getImagen() {
