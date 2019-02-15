@@ -86,6 +86,7 @@ public class Principal extends AppCompatActivity
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
+                            recetas.clear();
                             for(int i=0;i<response.length();i++){
                                 // Get current json object
                                 JSONObject RecetaJSON = response.getJSONObject(i);

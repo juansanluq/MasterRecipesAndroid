@@ -14,10 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MasterRecipesTheme">
+        <activity android:name=".VisorPDF"></activity>
         <activity
             android:name=".Principal"
             android:label="@string/title_activity_principal"
-            android:theme="@style/MasterRecipesTheme.NoActionBar"></activity>
+            android:theme="@style/MasterRecipesTheme.NoActionBar" />
         <activity android:name=".Registro" />
         <activity android:name=".Login" />
         <activity android:name=".MainActivity">

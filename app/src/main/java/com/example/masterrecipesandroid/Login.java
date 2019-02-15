@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
 
     static Usuario loggedUser = new Usuario();
     static RequestQueue requestQueue;
-    static String base_url = "http://192.168.1.133";
+    static String base_url = "http://192.168.1.6";
     public static Context contexto;
 
     @BindView(R.id.login_title)
