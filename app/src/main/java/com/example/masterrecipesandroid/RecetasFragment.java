@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.masterrecipesandroid.Adaptadores.RecetasAdapter;
-import com.example.masterrecipesandroid.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -97,7 +96,7 @@ public class RecetasFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Receta receta);
     }
 
     public void cargarAdaptador(){
