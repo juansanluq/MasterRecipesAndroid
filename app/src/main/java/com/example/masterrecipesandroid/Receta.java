@@ -19,13 +19,17 @@ public class Receta {
     @Expose
     @SerializedName("nombre")
     private String nombre;
+    @Expose
+    @SerializedName("id")
+    private int id;
 
-    public Receta(String imagen, String pdf, int dificultad, int categoria, String nombre) {
+    public Receta(String imagen, String pdf, int dificultad, int categoria, String nombre, int id) {
         this.imagen = imagen;
         this.pdf = pdf;
         this.dificultad = dificultad;
         this.categoria = categoria;
         this.nombre = nombre;
+        this.id = id;
     }
 
     public Receta()
@@ -40,6 +44,15 @@ public class Receta {
         this.dificultad = 0;
         this.categoria = 0;
         this.nombre = null;
+        this.id = 0;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getImagen() {

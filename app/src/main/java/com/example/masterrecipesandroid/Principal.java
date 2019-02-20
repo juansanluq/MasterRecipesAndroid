@@ -90,7 +90,7 @@ public class Principal extends AppCompatActivity
                             for(int i=0;i<response.length();i++){
                                 // Get current json object
                                 JSONObject RecetaJSON = response.getJSONObject(i);
-                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre")));
+                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
                             }
                             String sada = "";
                         } catch (JSONException e) {
@@ -183,5 +183,11 @@ public class Principal extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        recetas.clear();
     }
 }
