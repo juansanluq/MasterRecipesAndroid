@@ -8,6 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.masterrecipesandroid.Adaptadores.RecetasAdapter;
 
@@ -22,6 +26,7 @@ public class RecetasFragment extends Fragment {
     private RecetasAdapter recetasAdapter;
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayoutManager;
+    private Spinner spinner;
 
 
     // TODO: Customize parameter argument names
@@ -61,7 +66,26 @@ public class RecetasFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recetas, container, false);
         recyclerView = view.findViewById(R.id.rvRecetasFragment);
+        spinner = view.findViewById(R.id.spinner);
+
+        final String[] categorias = {"Entrantes","Pescados","Carnes","Verduras","Ensaladas","Postres"};
+        spinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categorias));
+
         cargarAdaptador();
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id)
+            {
+                Toast.makeText(adapterView.getContext(),
+                        (String) adapterView.getItemAtPosition(pos), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {    }
+        });
 
         return view;
     }

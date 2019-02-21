@@ -87,8 +87,8 @@ public class RecetasAdapter extends RecyclerView.Adapter<RecetasAdapter.RecetasV
                 Toast.makeText(context,listaRecetas.get(pos).getNombre(),Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                builder.setTitle("Confirm");
-                builder.setMessage("Are you sure?");
+                builder.setTitle("Confirmar");
+                builder.setMessage("¿Estas seguro de que deséas borrar la receta seleccionada?");
 
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
