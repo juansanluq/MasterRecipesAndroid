@@ -153,64 +153,6 @@ public class Login extends AppCompatActivity {
         requestQueue.add(sr_login);
     }
 
-    public static void getLoggedUser()
-    {
-        String url_getLoggedUser = base_url + "/api/1.0/usuarios/";
-        StringRequest sr_getLoggedUser = new StringRequest(Request.Method.GET, url_getLoggedUser,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            response = response.replace("[","");
-                            response = response.replace("]","");
-                            JSONObject Usuario = new JSONObject(response);
-                            loggedUser.setUsername(Usuario.getString("username"));
-                            loggedUser.setPassword(Usuario.getString("password"));
-                            loggedUser.setNombre(Usuario.getString("nombre"));
-                            loggedUser.setApellidos(Usuario.getString("apellidos"));
-                            loggedUser.setFechaNacimiento(Usuario.getString("fecha_nacimiento"));
-                            loggedUser.setEmail(Usuario.getString("email"));
-                            loggedUser.setLatitud(Usuario.getString("latitud"));
-                            loggedUser.setLongitud(Usuario.getString("longitud"));
-                            loggedUser.setNumeroTelefono(Usuario.getString("numero_telefono"));
-                            loggedUser.setFoto(Usuario.getString("foto"));
-                            loggedUser.setComentarios(Usuario.getString("comentarios"));
-                            loggedUser.setToken(UserToken);
-                            Toast.makeText(contexto,"Has iniciado sesión correctamente",Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(contexto,"Error interno del servidor, intentelo de nuevo más tarde",Toast.LENGTH_LONG).show();
-                    }
-                }) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                params.put("Authorization","Token " + UserToken);
-
-                return params;
-            }
-
-            @Override
-            public Priority getPriority() {
-                return Priority.LOW;
-            }
-
-        };
-        requestQueue.add(sr_getLoggedUser);
-    }
-
     private class full_login extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -276,6 +218,7 @@ public class Login extends AppCompatActivity {
                                 response = response.replace("[","");
                                 response = response.replace("]","");
                                 JSONObject Usuario = new JSONObject(response);
+                                loggedUser.setId(Usuario.getInt("id"));
                                 loggedUser.setUsername(Usuario.getString("username"));
                                 loggedUser.setPassword(Usuario.getString("password"));
                                 loggedUser.setNombre(Usuario.getString("nombre"));

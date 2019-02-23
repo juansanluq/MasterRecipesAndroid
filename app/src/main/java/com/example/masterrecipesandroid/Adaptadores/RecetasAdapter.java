@@ -121,27 +121,27 @@ public class RecetasAdapter extends RecyclerView.Adapter<RecetasAdapter.RecetasV
         return listaRecetas.size();
     }
 
-    public String getCategoria(int numeroCategoria)
+    public static String getCategoria(int numeroCategoria)
     {
         switch (numeroCategoria)
         {
-            case 1:
+            case 0:
                 return "Entrantes";
-            case 2:
+            case 1:
                 return "Pescados";
-            case 3:
+            case 2:
                 return "Carnes";
-            case 4:
+            case 3:
                 return "Verduras";
-            case 5:
+            case 4:
                 return "Ensaladas";
-            case 6:
+            case 5:
                 return "Postres";
         }
         return null;
     }
 
-    public String getDificultad(int numeroDificultad)
+    public static String getDificultad(int numeroDificultad)
     {
         switch (numeroDificultad)
         {
@@ -247,6 +247,7 @@ public class RecetasAdapter extends RecyclerView.Adapter<RecetasAdapter.RecetasV
                                     listaRecetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
                                 }
                                 notifyDataSetChanged();
+                                Principal.recetas = listaRecetas;
                                 progressDialog.dismiss();
                             } catch (JSONException e) {
                                 e.printStackTrace();

@@ -1,0 +1,12 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:gravity="center"
+    android:padding="10dp"
+    android:text="Prueba"
+    android:textColor="@color/primary"
+    android:textSize="20sp"
+    app:fontFamily="@font/concert_one" />

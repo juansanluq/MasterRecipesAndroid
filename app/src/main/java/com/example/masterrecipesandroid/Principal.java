@@ -1,5 +1,7 @@
 package com.example.masterrecipesandroid;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.downloader.Progress;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -42,7 +45,9 @@ import java.util.Map;
 public class Principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    static final ArrayList<Receta> recetas = new ArrayList<Receta>();
+    public static ArrayList<Receta> recetas = new ArrayList<Receta>();
+    public static ProgressDialog progressDialog;
+    static RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class Principal extends AppCompatActivity
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue = Volley.newRequestQueue(this);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,6 +81,11 @@ public class Principal extends AppCompatActivity
         txvNombre.setText(Login.loggedUser.getNombre());
         txvApellidos.setText(Login.loggedUser.getApellidos());
 
+        progressDialog = new ProgressDialog(Principal.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Sincronizando datos con el servidor...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         String url_login = Login.base_url + "/api/1.0/recetas/";
         JsonArrayRequest sr_recetas = new JsonArrayRequest(
@@ -92,7 +102,7 @@ public class Principal extends AppCompatActivity
                                 JSONObject RecetaJSON = response.getJSONObject(i);
                                 recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
                             }
-                            String sada = "";
+                            progressDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -122,6 +132,13 @@ public class Principal extends AppCompatActivity
         requestQueue.add(sr_recetas);
 
         navigationView.setNavigationItemSelectedListener(this);
+        Fragment fragment = new ProfileFragment();
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
     }
 
     @Override
@@ -132,28 +149,6 @@ public class Principal extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.principal, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -189,5 +184,112 @@ public class Principal extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         recetas.clear();
+    }
+
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        progressDialog = new ProgressDialog(Principal.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Sincronizando datos con el servidor...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        String url_login = Login.base_url + "/api/1.0/recetas/";
+        JsonArrayRequest sr_recetas = new JsonArrayRequest(
+                Request.Method.GET,
+                url_login,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            recetas.clear();
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject RecetaJSON = response.getJSONObject(i);
+                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
+                            }
+                            progressDialog.dismiss();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                params.put("Authorization","Token " + Login.loggedUser.getToken());
+
+                return params;
+            }
+
+        };
+        requestQueue.add(sr_recetas);
+    }*/
+
+    public static void RecargarRecetas(Context contexto)
+    {
+        progressDialog = new ProgressDialog(contexto);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Sincronizando datos con el servidor...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        String url_login = Login.base_url + "/api/1.0/recetas/";
+        JsonArrayRequest sr_recetas = new JsonArrayRequest(
+                Request.Method.GET,
+                url_login,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            recetas.clear();
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject RecetaJSON = response.getJSONObject(i);
+                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
+                            }
+                            progressDialog.dismiss();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                params.put("Authorization","Token " + Login.loggedUser.getToken());
+
+                return params;
+            }
+
+        };
+        requestQueue.add(sr_recetas);
     }
 }

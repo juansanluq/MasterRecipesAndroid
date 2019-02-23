@@ -214,7 +214,7 @@ public class Registro extends AppCompatActivity {
         }
     }
 
-    private boolean checkPermission() {
+    public boolean checkPermission() {
         /* Se compureba de que la SDK es superior a marshmallow, pues si es inferior no es necesario
          * pedir permisos */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -231,7 +231,7 @@ public class Registro extends AppCompatActivity {
         return true;
     }
 
-    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+    public static byte[] getFileDataFromDrawable(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();

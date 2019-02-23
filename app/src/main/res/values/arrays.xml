@@ -4,4 +4,17 @@
         <item>Cámara</item>
         <item>Galería</item>
     </string-array>
+    <string-array name="Categoria">
+        <item>Entrantes</item>
+        <item>Pescados</item>
+        <item>Carnes</item>
+        <item>Verduras</item>
+        <item>Ensaladas</item>
+        <item>Postres</item>
+    </string-array>
+    <string-array name="Dificultad">
+        <item>Baja</item>
+        <item>Media</item>
+        <item>Alta</item>
+    </string-array>
 </resources>
