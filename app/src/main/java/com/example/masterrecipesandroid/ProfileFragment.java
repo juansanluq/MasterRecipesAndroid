@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,9 +43,8 @@ import butterknife.BindView;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    TextView txvNombre, txvApellidos,txvEmail,txvNumeroTelefono, txvUsername, txvFechaNacimiento, txvComentarios;
-    ImageView imgProfile;
-    Button btnCerrarSesion;
+    TextView txvNombreCompleto,txvEmail,txvNumeroTelefono, txvUsername, txvFechaNacimiento, txvComentarios;
+    ImageView imgProfile, btnCerrarSesion;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -94,8 +94,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        txvNombre = view.findViewById(R.id.txvNombre);
-        txvApellidos = view.findViewById(R.id.txvApellidos);
+        txvNombreCompleto = view.findViewById(R.id.txvNombreCompleto);
         imgProfile = view.findViewById(R.id.imgProfile);
         txvEmail = view.findViewById(R.id.txvEmail);
         txvNumeroTelefono = view.findViewById(R.id.txvNumeroTelefono);
@@ -105,8 +104,7 @@ public class ProfileFragment extends Fragment {
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
 
         Picasso.with(getContext()).load(Login.loggedUser.getFoto()).into(imgProfile);
-        txvNombre.setText(Login.loggedUser.getNombre());
-        txvApellidos.setText(Login.loggedUser.getApellidos());
+        txvNombreCompleto.setText(Login.loggedUser.getNombre() + " " + Login.loggedUser.getApellidos());
         txvEmail.setText(Login.loggedUser.getEmail());
         txvNumeroTelefono.setText(Login.loggedUser.getNumeroTelefono());
         txvUsername.setText(Login.loggedUser.getUsername());
