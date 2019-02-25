@@ -48,9 +48,7 @@ public class Usuario {
 
     }
 
-    public Usuario(String comentarios, String foto, String numeroTelefono, String longitud,
-                   String latitud, String email, String fechaNacimiento, String apellidos,
-                   String nombre, String password, String username, int id) {
+    public Usuario(int id, String username, String password, String nombre, String apellidos, String fechaNacimiento, String email, String latitud, String longitud, String numeroTelefono,String foto, String comentarios) {
         this.comentarios = comentarios;
         this.foto = foto;
         this.numeroTelefono = numeroTelefono;

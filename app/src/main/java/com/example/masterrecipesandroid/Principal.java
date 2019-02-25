@@ -163,6 +163,9 @@ public class Principal extends AppCompatActivity
         } else if (id == R.id.nav_recetas) {
             fragment = new RecetasFragment();
 
+        } else if (id == R.id.nav_mapa) {
+            fragment = new MapFragment();
+
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_logout) {
