@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:lottie_autoPlay="true"
-        app:lottie_colorFilter="@color/primary_dark"
+        app:lottie_colorFilter="@color/icons"
         app:lottie_fileName="animation-w512-h512.json"
         app:lottie_imageAssetsFolder="assets"
         app:lottie_loop="true" />
