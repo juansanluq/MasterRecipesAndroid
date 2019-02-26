@@ -231,7 +231,7 @@
                     android:drawableTint="@color/accent"
                     android:hint="Comentario"
                     android:inputType="textEmailAddress"
-                    android:maxLength="9"
+                    android:maxLength="100"
                     android:paddingLeft="10dp"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>

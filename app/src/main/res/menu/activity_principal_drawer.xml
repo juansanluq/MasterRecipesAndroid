@@ -21,10 +21,6 @@
     <item android:title="Utilidades">
         <menu>
             <item
-                android:id="@+id/nav_help"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Ayuda" />
-            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Cerrar sesión" />
