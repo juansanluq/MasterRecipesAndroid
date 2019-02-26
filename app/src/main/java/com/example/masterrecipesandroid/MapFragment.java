@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -187,7 +188,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 if(Login.loggedUser.getId() == u.getId())
                                 {
                                     LatLng ubi = new LatLng(Double.parseDouble(u.getLatitud()), Double.parseDouble(u.getLongitud()));
-                                    mMap.addMarker(new MarkerOptions().position(ubi).title("Tú"));
+                                    mMap.addMarker(new MarkerOptions().position(ubi).title("Tú").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi, 15)); // Zoom del mapa
                                 }
                                 else

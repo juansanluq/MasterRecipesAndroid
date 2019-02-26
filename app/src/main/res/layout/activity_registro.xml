@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#5fb0c9"
+    android:background="@color/primary"
     android:orientation="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     tools:context=".Registro">
@@ -163,12 +163,12 @@
                     android:drawablePadding="10dip"
                     android:drawableTint="@color/accent"
                     android:editable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:hint="Fecha de nacimiento"
                     android:inputType="text"
                     android:paddingLeft="10dp"
-                    android:singleLine="true"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"/>
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout

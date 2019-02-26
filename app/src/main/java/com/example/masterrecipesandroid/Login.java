@@ -42,7 +42,7 @@ import butterknife.ButterKnife;
 
 public class Login extends AppCompatActivity {
 
-    public static Usuario loggedUser = new Usuario();
+    public static Usuario loggedUser;
     static RequestQueue requestQueue;
     public static String base_url = "http://192.168.1.133";
     public static Context contexto;
@@ -215,6 +215,7 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                             try {
+                                loggedUser = new Usuario();
                                 response = response.replace("[","");
                                 response = response.replace("]","");
                                 JSONObject Usuario = new JSONObject(response);
@@ -280,6 +281,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loggedUser = null;
         edtUsername.setText("");
         edtPassword.setText("");
         edtUsername.clearFocus();

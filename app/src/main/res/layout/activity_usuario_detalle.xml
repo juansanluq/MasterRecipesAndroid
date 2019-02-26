@@ -24,7 +24,7 @@
             android:layout_marginTop="-60dp"
             android:background="@drawable/profile_circular_border_imageview"
             android:elevation="5dp"
-            android:padding="20dp"
+            android:padding="10dp"
             android:scaleType="centerCrop" />
 
         <RelativeLayout
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/header_cover_image"
-            android:background="@color/primary"
+            android:background="#42A5F6"
             android:elevation="4dp"
             android:paddingBottom="24dp">
 

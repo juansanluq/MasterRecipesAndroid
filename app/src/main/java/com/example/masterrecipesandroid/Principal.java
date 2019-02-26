@@ -166,10 +166,47 @@ public class Principal extends AppCompatActivity
         } else if (id == R.id.nav_mapa) {
             fragment = new MapFragment();
 
-        } else if (id == R.id.nav_help) {
+        }  else if (id == R.id.nav_logout) {
+            final ProgressDialog progressDialog = new ProgressDialog(Principal.this);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Cerrando sesion...");
+            progressDialog.show();
+            String url_getLoggedUser = Login.base_url + "/api/1.0/logout/";
+            StringRequest sr_getLoggedUser = new StringRequest(Request.Method.POST, url_getLoggedUser,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            progressDialog.dismiss();
+                            finish();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(Principal.this,"Error interno del servidor, pruebe mas tarde",Toast.LENGTH_LONG).show();
+                        }
+                    }) {
 
-        } else if (id == R.id.nav_logout) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<String, String>();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    params.put("Authorization","Token " + Login.UserToken);
 
+                    return params;
+                }
+
+                @Override
+                public Priority getPriority() {
+                    return Priority.LOW;
+                }
+
+            };
+            requestQueue.add(sr_getLoggedUser);
         }
 
         if (fragment != null) {
@@ -188,60 +225,6 @@ public class Principal extends AppCompatActivity
         super.onDestroy();
         recetas.clear();
     }
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        progressDialog = new ProgressDialog(Principal.this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Sincronizando datos con el servidor...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        String url_login = Login.base_url + "/api/1.0/recetas/";
-        JsonArrayRequest sr_recetas = new JsonArrayRequest(
-                Request.Method.GET,
-                url_login,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            recetas.clear();
-                            for(int i=0;i<response.length();i++){
-                                // Get current json object
-                                JSONObject RecetaJSON = response.getJSONObject(i);
-                                recetas.add(new Receta(RecetaJSON.getString("imagen"),RecetaJSON.getString("pdf"),RecetaJSON.getInt("dificultad"),RecetaJSON.getInt("categoria"),RecetaJSON.getString("nombre"),RecetaJSON.getInt("id")));
-                            }
-                            progressDialog.dismiss();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                params.put("Authorization","Token " + Login.loggedUser.getToken());
-
-                return params;
-            }
-
-        };
-        requestQueue.add(sr_recetas);
-    }*/
 
     public static void RecargarRecetas(Context contexto)
     {

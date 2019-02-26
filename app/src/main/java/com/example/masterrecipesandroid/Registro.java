@@ -39,7 +39,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.masterrecipesandroid.Utilidades.Localizacion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,10 +92,6 @@ public class Registro extends AppCompatActivity {
     Bitmap photo;
     public static Context contexto;
     ProgressDialog progressDialog;
-    public static Localizacion loc;
-
-    public static double latitud;
-    public static double longitud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +99,6 @@ public class Registro extends AppCompatActivity {
         setContentView(R.layout.activity_registro);
         ButterKnife.bind(this);
         contexto = getApplicationContext();
-        //ActivityCompat.requestPermissions(Registro.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 123);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,14 +115,6 @@ public class Registro extends AppCompatActivity {
         edtFecha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPermisionLocation()) {
-                    Localizacion loc = new Localizacion(getApplicationContext());
-                    if (loc.getIsGPSTrackingEnabled()) {
-                        latitud = loc.getLatitude();
-                        longitud = loc.getLongitude();
-                        String asa = "";
-                    }
-                }
                 obtenerFecha();
             }
         });
@@ -274,10 +260,12 @@ public class Registro extends AppCompatActivity {
                     params.put("email", edtEmail.getText().toString());
                     params.put("numero_telefono", edtTelefono.getText().toString());
                     params.put("comentarios", edtComentario.getText().toString());
-                    if (loc != null)
+                    Location loc = MainActivity.location;
+                    String s = "";
+                    if (MainActivity.location != null)
                     {
-                        params.put("latitud",String.valueOf(latitud));
-                        params.put("longitud",String.valueOf(longitud));
+                        params.put("latitud",String.valueOf(MainActivity.latitude));
+                        params.put("longitud",String.valueOf(MainActivity.longitude));
                     }
                     return params;
                 }
@@ -298,22 +286,5 @@ public class Registro extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             progressDialog.dismiss();
         }
-    }
-
-    private boolean checkPermisionLocation(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-                Toast.makeText(this,"Error al cargar los permisos de localización, " +
-                        "vuelva a intentarlo",Toast.LENGTH_SHORT).show();
-                return false;
-            }else{
-                Log.i("checkPermisionLocation", "Permisos de localización cargados " +
-                        "correctamente");
-                return true;
-            }
-        }
-        return true;
     }
 }
